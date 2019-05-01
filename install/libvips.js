@@ -54,7 +54,7 @@ try {
   } else {
     // Is this arch/platform supported?
     const arch = process.env.npm_config_arch || process.arch;
-    const platformAndArch = platform();
+    let platformAndArch = platform();
     if (platformAndArch === 'win32-ia32') {
       throw new Error('Windows x86 (32-bit) node.exe is not supported');
     }
@@ -66,6 +66,9 @@ try {
     }
     if (detectLibc.family === detectLibc.GLIBC && detectLibc.version && semver.lt(`${detectLibc.version}.0`, '2.13.0')) {
       throw new Error(`Use with glibc version ${detectLibc.version} requires manual installation of libvips >= ${minimumLibvipsVersion}`);
+    }
+    if (platformAndArch.indexOf('darwin') !== -1) {
+      platformAndArch = 'darwin-x64';
     }
     // Download to per-process temporary file
     const tarFilename = ['libvips', minimumLibvipsVersion, platformAndArch].join('-') + '.tar.gz';
